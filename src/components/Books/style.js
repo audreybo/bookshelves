@@ -33,6 +33,10 @@ const ListTitle = styled(Title)`
 	align-items: center;
 	height: 60px;
 	margin-left: 25px;
+
+	@media only screen and (max-width : 767px) {
+		margin-left: 25px;
+	}
 `;
 
 const CardContainer = styled.div`

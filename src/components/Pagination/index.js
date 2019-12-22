@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Pagination from 'react-js-pagination';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -7,42 +7,33 @@ import { PaginationWrapper } from './style';
 import { MAX_BOOKS_PER_PAGE } from '../../constants';
 import 'bootstrap/dist/css/bootstrap.css';
 
-class Paginate extends React.Component {
-	state = { activePage: 1 };
+const Paginate = ({ bookCount, fetchBooks, id }) => {
+	const [ activePage, setPage ] = useState(1);
 
-	componentDidUpdate(prevProps) {
-		const { id } = this.props;
+	useEffect(() => {
+		setPage(1);
+	}, [id]);
 
-		if (prevProps.id !== id) {
-			this.setState({ activePage: 1 });
-		}
-	}
-
-	handlePageChange = pageNumber => {
-		const { fetchBooks, id } = this.props;
-		this.setState({ activePage: pageNumber });
+	const handlePageChange = pageNumber => {
+		setPage(pageNumber);
 		fetchBooks(id, pageNumber);
-	}
-	
-	render() {
-		const { bookCount } = this.props;
+	};
 
-		return (
-			<PaginationWrapper isDisplayed={bookCount > MAX_BOOKS_PER_PAGE}>
-				<Pagination
-					hideDisabled
-					activePage={this.state.activePage}
-					itemsCountPerPage={MAX_BOOKS_PER_PAGE}
-					totalItemsCount={bookCount}
-					pageRangeDisplayed={5}
-					onChange={this.handlePageChange}
-					itemClass="page-item"
-					linkClass="page-link"
-				/>
-			</PaginationWrapper>
-		);
-	}
-}
+	return (
+		<PaginationWrapper isDisplayed={bookCount > MAX_BOOKS_PER_PAGE}>
+			<Pagination
+				hideDisabled
+				activePage={activePage}
+				itemsCountPerPage={MAX_BOOKS_PER_PAGE}
+				totalItemsCount={bookCount}
+				pageRangeDisplayed={5}
+				onChange={handlePageChange}
+				itemClass="page-item"
+				linkClass="page-link"
+			/>
+		</PaginationWrapper>
+	);
+};
 
 const mapStateToProps = state => {
 	const { shelves, current } = state;
@@ -54,6 +45,7 @@ const mapStateToProps = state => {
 Paginate.propTypes = {
 	id: PropTypes.string.isRequired,
 	bookCount: PropTypes.number.isRequired,
+	fetchBooks: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps, { fetchBooks })(Paginate);
